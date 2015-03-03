@@ -14,16 +14,18 @@ svn (not recommended):
 
 Build
 -------
-* $ cd snowcookie
-* $ mkdir build
-* $ cd build
-* $ cmake ..
-* $ make
+* `$ cd snowcookie`
+* `$ mkdir build`
+* `$ cd build`
+* `$ cmake ..`
+* `$ make`
 
 Run snow-edison
 -------
 snow-edison is Edison-based tcp server/data logger.
-$ ./edison-board/snow-edison [port [log_file]]
+
+`$ ./edison-board/snow-edison [port [log_file]]`
+
 Default values:
 * port - 12345
 * log_file - runnig time, in format "log_Y-m-d-H-M-S.txt"
