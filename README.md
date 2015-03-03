@@ -5,8 +5,10 @@ Getting repository
 -------
 https (usual way):
 * git clone https://github.com/loganek/snowcookie.git
+
 ssh:
 * git clone git@github.com:loganek/snowcookie.git
+
 svn (not recommended):
 * svn checkout https://github.com/loganek/snowcookie
 
