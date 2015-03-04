@@ -8,6 +8,8 @@
 #ifndef EDISON_BOARD_DATAGLUTTON_IDATA_PROVIDER_
 #define EDISON_BOARD_DATAGLUTTON_IDATA_PROVIDER_
 
+#include <string>
+
 namespace SnowCookie {
 
 class IDataProvider
