@@ -1,6 +1,7 @@
 #include "data_writer.h"
 #include "logger.h"
 #include "uart_device.h"
+#include "fake_data_provider.h"
 
 #include <iostream>
 #include <thread>
@@ -14,7 +15,11 @@ DataWriter::DataWriter(const std::string& filename)
  : filename(filename),
    parser(0x0A, 0x1A, 0x33)
 {
+#ifdef FAKE_DATA
+	data_provider = std::make_shared<FakeDataProvider> ();
+#else
 	data_provider = std::make_shared<UartDevice> ();
+#endif
 }
 
 void DataWriter::init()
@@ -48,6 +53,7 @@ void DataWriter::start()
 void DataWriter::close()
 {
 	Logger::log ("closing file ", filename);
+	file.flush (); // <- because of compiler's bugs
 	file.close ();
 	data_provider->close ();
 }

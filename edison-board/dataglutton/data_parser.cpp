@@ -27,7 +27,7 @@ void DataParser::append_bytes (char buff[], int size)
 	for (int i = 0; i < size; i++)
 	{
 		data [current_ptr++] = buff[i];
-		if (data [i] == end_character)
+		if (buff [i] == end_character)
 		{
 			parse_frame ();
 			current_ptr = 0;

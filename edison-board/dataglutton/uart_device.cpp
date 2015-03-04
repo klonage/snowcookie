@@ -20,7 +20,7 @@ void UartDevice::init (const std::string& dev_name)
 	uart_fd = open(dev_name.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
 
 	if (uart_fd == -1)
-		throw std::runtime_error ("cannot open port");
+		throw std::runtime_error ("cannot open uart device");
 
 	tcgetattr(uart_fd, &options);
 	options.c_cflag = B115200 | CS8 | CLOCAL | CREAD;
