@@ -1,5 +1,6 @@
 #include "data_writer.h"
 #include "logger.h"
+#include "uart_device.h"
 
 #include <iostream>
 #include <thread>
@@ -13,13 +14,14 @@ DataWriter::DataWriter(const std::string& filename)
  : filename(filename),
    parser(0x0A, 0x1A, 0x33)
 {
+	data_provider = std::make_shared<UartDevice> ();
 }
 
 void DataWriter::init()
 {
 	file.open(filename, std::ios::out | std::ios::binary);
 
-	uart_reader.init ("/dev/ttyMFD1");
+	data_provider->init ("/dev/ttyMFD1");
 
 	if (!file.is_open())
 		throw std::runtime_error("cannot open file: " + filename);
@@ -37,7 +39,7 @@ void DataWriter::start()
 	char tmp_buffer [128];
 	while (run)
 	{
-		auto size = uart_reader.read_data (tmp_buffer, 128);
+		auto size = data_provider->read_data (tmp_buffer, 128);
 		parser.append_bytes (tmp_buffer, size);
 	}
 	close();
@@ -47,7 +49,7 @@ void DataWriter::close()
 {
 	Logger::log ("closing file ", filename);
 	file.close ();
-	uart_reader.close ();
+	data_provider->close ();
 }
 
 void DataWriter::stop()

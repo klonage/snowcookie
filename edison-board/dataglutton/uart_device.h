@@ -12,9 +12,11 @@
 
 #include <string>
 
+#include "idata_provider.h"
+
 namespace SnowCookie {
 
-class UartDevice
+class UartDevice : public IDataProvider
 {
 	termios options;
 	int uart_fd = -1;
@@ -22,9 +24,9 @@ class UartDevice
 public:
 	virtual ~UartDevice () {}
 
-	void init (const std::string& dev_name);
-	void close ();
-	int read_data (char buffer[], int max_size);
+	void init (const std::string& dev_name) override;
+	void close () override;
+	int read_data (char buffer[], int max_size) override;
 };
 
 }
