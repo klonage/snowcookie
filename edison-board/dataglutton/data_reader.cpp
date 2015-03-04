@@ -10,26 +10,35 @@
 using namespace SnowCookie;
 
 DataReader::DataReader(const std::string& filename)
- : filename(filename)
+ : filename(filename),
+   parser(0x0A, 0x1A, 0x33)
 {
 }
 
 void DataReader::init()
 {
-	file.open(filename);
+	file.open(filename, std::ios::out | std::ios::binary);
+
+	uart_reader.init ("/dev/ttyMFD1");
 
 	if (!file.is_open())
 		throw std::runtime_error("cannot open file: " + filename);
+
+	parser.register_handler ([this] (DataBuffer buffer) {
+		file.write ((char*)&buffer.timestamp, sizeof(buffer.timestamp));
+		file.write ((char*)buffer.data, buffer.size);
+	});
 }
 
 void DataReader::start()
 {
 	std::lock_guard<std::mutex> lock (start_stop);
 	run = true;
+	char tmp_buffer [128];
 	while (run)
 	{
-		file << "hej" << std::endl;
-		std::this_thread::sleep_for (std::chrono::seconds(1));
+		auto size = uart_reader.read_data (tmp_buffer, 128);
+		parser.append_bytes (tmp_buffer, size);
 	}
 	close();
 }
@@ -37,7 +46,8 @@ void DataReader::start()
 void DataReader::close()
 {
 	Logger::log ("closing file ", filename);
-	file.close();
+	file.close ();
+	uart_reader.close ();
 }
 
 void DataReader::stop()

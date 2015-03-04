@@ -3,8 +3,10 @@
 
 #include "bg_service.h"
 
+#include "data_parser.h"
 #include <fstream>
 #include <string>
+#include "uart_device.h"
 
 namespace SnowCookie {
 
@@ -12,6 +14,9 @@ class DataReader : public BgService
 {
 	std::ofstream file;
 	std::string filename;
+
+	UartDevice uart_reader;
+	DataParser parser;
 
 	void close();
 
