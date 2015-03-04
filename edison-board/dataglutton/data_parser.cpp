@@ -52,7 +52,6 @@ void DataParser::parse_frame ()
 	long long timestamp = std::chrono::duration_cast<std::chrono::microseconds> (now.time_since_epoch ()).count ();
 
 	DataBuffer buf = {data, timestamp, current_ptr};
-	Logger::log ("crc valid, distribute buffer with timestamp ", timestamp, " us");
 	on_frame_parsed (buf);
 }
 

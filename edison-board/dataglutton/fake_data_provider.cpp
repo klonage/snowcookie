@@ -34,7 +34,7 @@ int FakeDataProvider::read_data (char buffer[], int max_size)
 
 	buffer[4] = get_crc(t.c_str(), t.length());
 	buffer[5] = 0x0A;
-
+	total += 6;
 	counter++;
 
 	return 6;
@@ -42,10 +42,11 @@ int FakeDataProvider::read_data (char buffer[], int max_size)
 
 void FakeDataProvider::init (const std::string& source)
 {
+	total = 0;
 	counter = 0;
 }
 
 void FakeDataProvider::close ()
 {
-	Logger::log ("Saved: ", counter, " data packets");
+	Logger::log ("Generated: ", counter, " data packets(total size: ", total, " bytes)");
 }

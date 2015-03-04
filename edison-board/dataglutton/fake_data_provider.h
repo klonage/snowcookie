@@ -16,6 +16,7 @@ class FakeDataProvider : public IDataProvider
 {
 	static int get_crc(const char buffer[], int size);
 	int counter = 0;
+	unsigned long long total = 0;
 
 public:
 	int read_data (char buffer[], int max_size) override;
