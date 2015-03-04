@@ -4,13 +4,14 @@
 #include "bg_service.h"
 
 #include "data_parser.h"
+#include "uart_device.h"
+
 #include <fstream>
 #include <string>
-#include "uart_device.h"
 
 namespace SnowCookie {
 
-class DataReader : public BgService
+class DataWriter : public BgService
 {
 	std::ofstream file;
 	std::string filename;
@@ -21,8 +22,8 @@ class DataReader : public BgService
 	void close();
 
 public:
-	DataReader(const std::string& filename);
-	virtual ~DataReader() {}
+	DataWriter(const std::string& filename);
+	virtual ~DataWriter() {}
 
 	void init() override;
 	void start() override;

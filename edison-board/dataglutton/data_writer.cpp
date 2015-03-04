@@ -1,4 +1,4 @@
-#include "data_reader.h"
+#include "data_writer.h"
 #include "logger.h"
 
 #include <iostream>
@@ -9,13 +9,13 @@
 
 using namespace SnowCookie;
 
-DataReader::DataReader(const std::string& filename)
+DataWriter::DataWriter(const std::string& filename)
  : filename(filename),
    parser(0x0A, 0x1A, 0x33)
 {
 }
 
-void DataReader::init()
+void DataWriter::init()
 {
 	file.open(filename, std::ios::out | std::ios::binary);
 
@@ -30,7 +30,7 @@ void DataReader::init()
 	});
 }
 
-void DataReader::start()
+void DataWriter::start()
 {
 	std::lock_guard<std::mutex> lock (start_stop);
 	run = true;
@@ -43,20 +43,20 @@ void DataReader::start()
 	close();
 }
 
-void DataReader::close()
+void DataWriter::close()
 {
 	Logger::log ("closing file ", filename);
 	file.close ();
 	uart_reader.close ();
 }
 
-void DataReader::stop()
+void DataWriter::stop()
 {
 	run = false;
 	std::lock_guard<std::mutex> lock (start_stop);
 }
 
-std::string DataReader::generate_unique_filename(std::string name)
+std::string DataWriter::generate_unique_filename(std::string name)
 {
 	struct stat buffer;
 	std::string new_name = name;

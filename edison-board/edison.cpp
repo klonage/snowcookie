@@ -1,5 +1,4 @@
 #include "server/server.h"
-#include "dataglutton/data_reader.h"
 #include "service_manager.h"
 #include "logger.h"
 
@@ -9,6 +8,7 @@
 #include <ctime>
 
 #include <signal.h>
+#include "dataglutton/data_writer.h"
 
 using namespace SnowCookie;
 
@@ -50,13 +50,13 @@ int main(int argc, char** argv)
 		}
 	}
 
-	filename = DataReader::generate_unique_filename(filename);
+	filename = DataWriter::generate_unique_filename(filename);
 
 	Logger::log ("Port: ", port);
 	Logger::log ("Destination file name: ", filename);
 
 	manager.register_service(std::make_shared<Server>(port));
-	manager.register_service(std::make_shared<DataReader>(filename));
+	manager.register_service(std::make_shared<DataWriter>(filename));
 
 	signal(SIGINT, signal_handler);
 
