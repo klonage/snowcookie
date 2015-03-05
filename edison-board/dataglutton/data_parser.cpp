@@ -42,7 +42,11 @@ void DataParser::append_bytes (char buff[], int size)
 
 void DataParser::parse_frame ()
 {
-	if (!check_crc ())
+	unsigned char new_data [max_bytes];
+
+	int size = unpack_frame (new_data);
+
+	if (!check_crc (new_data, size))
 	{
 		Logger::log ("invalid crc");
 		return;
@@ -51,31 +55,34 @@ void DataParser::parse_frame ()
 	auto now = std::chrono::high_resolution_clock::now ();
 	long long timestamp = std::chrono::duration_cast<std::chrono::microseconds> (now.time_since_epoch ()).count ();
 
-	DataBuffer buf = {data, timestamp, current_ptr};
+	DataBuffer buf = {data, timestamp, current_ptr, new_data, size};
 	on_frame_parsed (buf);
 }
 
-bool DataParser::check_crc () const
+int DataParser::unpack_frame (unsigned char *data)
 {
-	unsigned char new_data [max_bytes];
 	int new_size = 0;
-	unsigned char crc = 0;
 
-	// unpacking
 	for (int i = 0; i < current_ptr - 1; i++)
 	{
 		if (data [i] == substitute_character)
 		{
-			new_data [new_size++] = (char)(data [i + 1] ^ xor_character);
+			data [new_size++] = (char)(data [i + 1] ^ xor_character);
 			i++;
 		}
 		else
-			new_data [new_size++] = data [i];
+			data [new_size++] = data [i];
 	}
 
-	for (int i = 0; i < new_size-1; i++)
-		crc ^= new_data [i];
+	return new_size;
+}
 
-	auto expected_crc = new_data [new_size-1];
+bool DataParser::check_crc (unsigned char *data, int new_size) const
+{
+	char crc = 0;
+	for (int i = 0; i < new_size-1; i++)
+		crc ^= data [i];
+
+	auto expected_crc = data [new_size-1];
 	return crc == expected_crc;
 }
