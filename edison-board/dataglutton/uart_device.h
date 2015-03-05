@@ -12,11 +12,11 @@
 
 #include <string>
 
-#include "idata_provider.h"
+#include "iplug_device.h"
 
 namespace SnowCookie {
 
-class UartDevice : public IDataProvider
+class UartDevice : public IPlugDevice
 {
 	termios options;
 	int uart_fd = -1;

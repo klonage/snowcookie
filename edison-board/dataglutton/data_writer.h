@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-#include "idata_provider.h"
+#include "iplug_device.h"
 
 namespace SnowCookie {
 
@@ -17,7 +17,7 @@ class DataWriter : public BgService
 	std::ofstream file;
 	std::string filename;
 
-	std::shared_ptr<IDataProvider> data_provider;
+	std::shared_ptr<IPlugDevice> data_provider;
 	DataParser parser;
 
 	void close();

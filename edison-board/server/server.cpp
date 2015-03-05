@@ -2,8 +2,6 @@
 #include "client_service.h"
 #include "logger.h"
 #include "service_manager.h"
-#include "dataglutton/idata_provider.h"
-
 #include <arpa/inet.h>
 #include <unistd.h>
 
@@ -11,6 +9,7 @@
 #include <cassert>
 
 #include <thread>
+#include "../dataglutton/iplug_device.h"
 
 using namespace SnowCookie;
 
@@ -97,7 +96,7 @@ void Server::thread_finished()
 
 void Server::pass_to_device (unsigned char *buffer, int size)
 {
-	auto device = manager->get_service<IDataProvider> (ServiceType::UART_DEVICE);
+	auto device = manager->get_service<IPlugDevice> (ServiceType::UART_DEVICE);
 	if (device)
 	{
 		int s = size;

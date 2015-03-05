@@ -1,21 +1,21 @@
 /*
- * idata_provider.h
+ * iplug_device.h
  *
  *  Created on: Mar 4, 2015
  *      Author: loganek
  */
 
-#ifndef EDISON_BOARD_DATAGLUTTON_IDATA_PROVIDER_
-#define EDISON_BOARD_DATAGLUTTON_IDATA_PROVIDER_
+#ifndef EDISON_BOARD_DATAGLUTTON_IPLUG_DEVICE_
+#define EDISON_BOARD_DATAGLUTTON_IPLUG_DEVICE_
 
 #include <string>
 
 namespace SnowCookie {
 
-class IDataProvider
+class IPlugDevice
 {
 public:
-	virtual ~IDataProvider () {}
+	virtual ~IPlugDevice () {}
 
 	virtual int read_data (char buffer[], int max_size) = 0;
 	virtual int write_data (unsigned char buffer[], int size) = 0;
@@ -25,4 +25,4 @@ public:
 
 }
 
-#endif /* EDISON_BOARD_DATAGLUTTON_IDATA_PROVIDER_ */
+#endif /* EDISON_BOARD_DATAGLUTTON_IPLUG_DEVICE_ */

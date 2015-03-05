@@ -8,11 +8,11 @@
 #ifndef EDISON_BOARD_FAKE_DATA_PROVIDER_H_
 #define EDISON_BOARD_FAKE_DATA_PROVIDER_H_
 
-#include "idata_provider.h"
+#include "iplug_device.h"
 
 namespace SnowCookie {
 
-class FakeDataProvider : public IDataProvider
+class FakeDataProvider : public IPlugDevice
 {
 	static int get_crc(const char buffer[], int size);
 	int counter = 0;
