@@ -3,6 +3,8 @@
 
 #include "bg_service.h"
 
+#include "dataglutton/data_parser.h"
+
 #include <atomic>
 
 namespace SnowCookie {
@@ -19,7 +21,7 @@ class Server : public BgService
 	void request_handler(int client_fd);
 	void thread_finished();
 public:
-	Server(int port);
+	Server(int port, std::shared_ptr<ServiceManager> manager);
 	virtual ~Server(){}
 
 	void init() override;
@@ -28,6 +30,8 @@ public:
 
 	std::string get_name() const override
 	{ return std::string("tcp server"); }
+
+	void pass_to_device (unsigned char *buffer, int size);
 };
 
 }

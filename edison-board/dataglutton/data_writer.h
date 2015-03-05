@@ -23,7 +23,7 @@ class DataWriter : public BgService
 	void close();
 
 public:
-	DataWriter(const std::string& filename);
+	DataWriter(const std::string& filename, std::shared_ptr<ServiceManager> manager);
 	virtual ~DataWriter() {}
 
 	void init() override;

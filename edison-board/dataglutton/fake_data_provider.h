@@ -20,6 +20,7 @@ class FakeDataProvider : public IDataProvider
 
 public:
 	int read_data (char buffer[], int max_size) override;
+	int write_data (unsigned char buffer[], int size) override;
 	void init (const std::string& source) override;
 	void close () override;
 };

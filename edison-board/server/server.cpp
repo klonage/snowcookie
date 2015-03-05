@@ -1,6 +1,8 @@
 #include "server.h"
 #include "client_service.h"
 #include "logger.h"
+#include "service_manager.h"
+#include "dataglutton/idata_provider.h"
 
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -12,8 +14,8 @@
 
 using namespace SnowCookie;
 
-Server::Server(int port)
-: port(port)
+Server::Server(int port, std::shared_ptr<ServiceManager> manager)
+: SnowCookie::BgService (manager), port(port)
 {
 }
 
@@ -91,4 +93,20 @@ void Server::thread_finished()
 	thread_count--;
 
 	Logger::log ("thread finished, ", thread_count, " thread(s) left");
+}
+
+void Server::pass_to_device (unsigned char *buffer, int size)
+{
+	auto device = manager->get_service<IDataProvider> (ServiceType::UART_DEVICE);
+	if (device)
+	{
+		int s = size;
+		while (s > 0)
+		{
+			auto x = device->write_data (buffer, size);
+			if (x < 0)
+				break;
+			s -= x;
+		}
+	}
 }

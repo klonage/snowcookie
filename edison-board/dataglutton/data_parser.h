@@ -25,9 +25,9 @@ class DataParser
 {
 	static constexpr int max_bytes = 128;
 
-	const unsigned char end_character;
-	const unsigned char substitute_character;
-	const unsigned char xor_character;
+	const unsigned char end_character = 0x0A;
+	const unsigned char substitute_character = 0x1A;
+	const unsigned char xor_character = 0x33;
 
 	int current_ptr = 0;
 	unsigned char data [max_bytes];
@@ -42,7 +42,6 @@ class DataParser
 
 public:
 	virtual ~DataParser () {}
-	DataParser (unsigned char end, unsigned char substitute, unsigned char xor_c);
 
 	void register_handler (std::function<void(DataBuffer)> func);
 

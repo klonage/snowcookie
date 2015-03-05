@@ -9,6 +9,9 @@ using namespace SnowCookie;
 ClientService::ClientService(int sock_fd)
  : sock_fd(sock_fd)
 {
+	parser.register_handler ([this] (DataBuffer buffer) {
+		on_buffer_parsed (buffer);
+	});
 }
 
 void ClientService::service(std::function<void()> finish_handler)
@@ -29,4 +32,18 @@ void ClientService::close()
 {
 	Logger::log ("closing connection with client");
 	::close(sock_fd);
+}
+
+void ClientService::on_buffer_parsed (const DataBuffer& buffer)
+{
+	switch (buffer.frame [0])
+	{
+	case 'P': // echo
+		break;
+	case 'S': // to stm
+		server->pass_to_device (buffer.frame, buffer.frame_size);
+		break;
+	default:
+		break;// edison handler
+	}
 }

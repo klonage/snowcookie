@@ -12,11 +12,6 @@
 
 using namespace SnowCookie;
 
-DataParser::DataParser (unsigned char end, unsigned char substitute, unsigned char xor_c)
-: end_character (end), substitute_character (substitute), xor_character (xor_c)
-{
-}
-
 void DataParser::register_handler (std::function<void(DataBuffer)> func)
 {
 	on_frame_parsed = func;

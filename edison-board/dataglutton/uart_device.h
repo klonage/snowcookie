@@ -27,6 +27,7 @@ public:
 	void init (const std::string& dev_name) override;
 	void close () override;
 	int read_data (char buffer[], int max_size) override;
+	int write_data (unsigned char buffer[], int size) override;
 };
 
 }

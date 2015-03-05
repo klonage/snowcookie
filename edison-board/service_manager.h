@@ -3,22 +3,34 @@
 
 #include "bg_service.h"
 
-#include <vector>
+#include <map>
 #include <memory>
 
 namespace SnowCookie {
 
+enum class ServiceType
+{
+	TCP_SERVER,
+	UART_DEVICE,
+};
+
 class ServiceManager
 {
-	std::vector<std::shared_ptr<BgService>> services;
+	std::map<ServiceType, std::shared_ptr<BgService>> services;
 
 public:
 	virtual ~ServiceManager() {}
 
-	void register_service(std::shared_ptr<BgService> service);
+	void register_service(std::shared_ptr<BgService> service, ServiceType type);
 	bool init_all();
 	void start_all();
 	void stop_all();
+
+	template <typename T>
+	std::shared_ptr<T> get_service (ServiceType type)
+	{
+		return std::dynamic_pointer_cast<T> (services [type]);
+	}
 };
 
 }

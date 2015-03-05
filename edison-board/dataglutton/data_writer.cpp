@@ -2,6 +2,7 @@
 #include "logger.h"
 #include "uart_device.h"
 #include "fake_data_provider.h"
+#include "service_manager.h"
 
 #include <iostream>
 #include <thread>
@@ -10,10 +11,10 @@
 #include <sys/stat.h>
 
 using namespace SnowCookie;
-
-DataWriter::DataWriter(const std::string& filename)
- : filename(filename),
-   parser(0x0A, 0x1A, 0x33)
+#define FAKE_DATA
+DataWriter::DataWriter(const std::string& filename, std::shared_ptr<ServiceManager> manager)
+ : BgService (manager),
+   filename(filename)
 {
 #ifdef FAKE_DATA
 	data_provider = std::make_shared<FakeDataProvider> ();

@@ -36,7 +36,7 @@ std::string get_dated_filename()
 
 int main(int argc, char** argv)
 {
-	ServiceManager manager;
+	std::shared_ptr<ServiceManager> manager = std::make_shared<ServiceManager> ();
 	int port = 12345;
 	std::string filename = get_dated_filename();
 
@@ -55,22 +55,22 @@ int main(int argc, char** argv)
 	Logger::log ("Port: ", port);
 	Logger::log ("Destination file name: ", filename);
 
-	manager.register_service(std::make_shared<Server>(port));
-	manager.register_service(std::make_shared<DataWriter>(filename));
+	manager->register_service(std::make_shared<Server>(port, manager), ServiceType::TCP_SERVER);
+	manager->register_service(std::make_shared<DataWriter>(filename, manager), ServiceType::UART_DEVICE);
 
 	signal(SIGINT, signal_handler);
 
-	if (!manager.init_all())
+	if (!manager->init_all())
 	{
 		return 0;
 	}
 
-	manager.start_all();
+	manager->start_all();
 
 	std::thread([&manager]{
 		std::unique_lock<std::mutex> lck(mtx);
 		while (!ready) cv.wait(lck);
-		manager.stop_all();
+		manager->stop_all();
 	}).join();
 
 	return 0;

@@ -5,10 +5,10 @@
 
 using namespace SnowCookie;
 
-void ServiceManager::register_service(std::shared_ptr<BgService> service)
+void ServiceManager::register_service(std::shared_ptr<BgService> service, ServiceType type)
 {
 	Logger::log ("register service ", service->get_name());
-	services.push_back(service);
+	services.insert (std::make_pair (type, service));
 }
 
 bool ServiceManager::init_all()
@@ -20,8 +20,8 @@ bool ServiceManager::init_all()
 	{
 		try
 		{
-			Logger::log ("Trying to init service ", service->get_name());
-			service->init();
+			Logger::log ("Trying to init service ", service.second->get_name());
+			service.second->init();
 		}
 		catch (const std::exception& ex)
 		{
@@ -40,8 +40,8 @@ void ServiceManager::stop_all()
 
 	for (auto service : services)
 	{
-		Logger::log ("trying to stop service", service->get_name());
-		service->stop();
+		Logger::log ("trying to stop service", service.second->get_name());
+		service.second->stop();
 	}
 }
 
@@ -51,10 +51,10 @@ void ServiceManager::start_all()
 
 	for (auto service : services)
 	{
-		Logger::log ("trying to run service ", service->get_name());
+		Logger::log ("trying to run service ", service.second->get_name());
 
 		std::thread([service] {
-			service->start();
+			service.second->start();
 		}).detach();
 	}
 	Logger::log ("running finished");
