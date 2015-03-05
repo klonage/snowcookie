@@ -59,19 +59,19 @@ void DataParser::parse_frame ()
 	on_frame_parsed (buf);
 }
 
-int DataParser::unpack_frame (unsigned char *data)
+int DataParser::unpack_frame (unsigned char *frame)
 {
 	int new_size = 0;
 
 	for (int i = 0; i < current_ptr - 1; i++)
 	{
-		if (data [i] == substitute_character)
+		if (frame [i] == substitute_character)
 		{
-			data [new_size++] = (char)(data [i + 1] ^ xor_character);
+			frame [new_size++] = (char)(data [i + 1] ^ xor_character);
 			i++;
 		}
 		else
-			data [new_size++] = data [i];
+			frame [new_size++] = data [i];
 	}
 
 	return new_size;
