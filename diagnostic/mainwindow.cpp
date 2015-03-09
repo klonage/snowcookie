@@ -44,6 +44,10 @@ void MainWindow::on_connect_clicked()
 	socket = new QTcpSocket (this);
 	connect (socket, SIGNAL (readyRead ()), SLOT (read_data ()));
 
+	parser.register_handler ([this] (DataBuffer buf) {
+		handle_buffer (buf);
+	});
+
 	socket->connectToHost (ui->ipLineEdit->text (), ui->portLineEdit->text ().toInt ());
 	if(socket->waitForConnected (3000))
 		show_message ("connected!");
@@ -56,6 +60,8 @@ void MainWindow::on_connect_clicked()
 void MainWindow::read_data ()
 {
 	QByteArray data = socket->readAll();
+
+	parser.append_bytes (data.constData (), data.size ());
 }
 
 void MainWindow::show_message (const std::string& msg)
@@ -63,4 +69,23 @@ void MainWindow::show_message (const std::string& msg)
 	QMessageBox msgBox;
 	msgBox.setText (QString::fromStdString (msg));
 	msgBox.exec();
+}
+
+void MainWindow::handle_buffer(SnowCookie::DataBuffer buffer)
+{
+	auto frame = EdisonFrame::parse_frame (buffer.frame, buffer.size);
+
+	switch (frame->get_type ())
+	{
+	case EdisonFrame::GET_STATUS:
+		update_status (std::static_pointer_cast<GetStatusEdisonFrame>(frame));
+		break;
+	default:
+		break;
+	}
+}
+
+void MainWindow::update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame> frame)
+{
+	ui->diskUsageLabel->setText (QString::number (frame->get_size ()/1024/1024.0, 'f', 3));
 }

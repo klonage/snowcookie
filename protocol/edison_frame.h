@@ -47,7 +47,7 @@ class GetStatusEdisonFrame : public EdisonFrame
 	long long size = 0;
 public:
 	virtual ~GetStatusEdisonFrame () {}
-	GetStatusEdisonFrame () : EdisonFrame (GET_STATUS) { request = true; }
+	GetStatusEdisonFrame (bool request = true) : EdisonFrame (GET_STATUS), request (request) {}
 	GetStatusEdisonFrame (unsigned char* buffer, int size);
 
 	void set_data (int log_count);
@@ -55,6 +55,8 @@ public:
 	int serialize (unsigned char* data) override;
 
 	static constexpr int max_size = 3 + sizeof (long long);
+
+	long long get_size () const { return size; }
 };
 
 }

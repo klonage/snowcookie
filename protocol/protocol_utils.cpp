@@ -25,7 +25,7 @@ bool check_crc (unsigned char *data, int size, char expected_crc)
 	return crc == expected_crc;
 }
 
-int unpack_frame (unsigned char *data, int size, char substitute_char, char xor_char)
+int unpack_frame (unsigned char *data, int size, unsigned char* destination, char substitute_char, char xor_char)
 {
 	int new_size = 0;
 
@@ -33,11 +33,11 @@ int unpack_frame (unsigned char *data, int size, char substitute_char, char xor_
 	{
 		if (data [i] == substitute_char)
 		{
-			data [new_size++] = (char)(data [i + 1] ^ xor_char);
+			destination [new_size++] = (char)(data [i + 1] ^ xor_char);
 			i++;
 		}
 		else
-			data [new_size++] = data [i];
+			destination [new_size++] = data [i];
 	}
 
 	return new_size;

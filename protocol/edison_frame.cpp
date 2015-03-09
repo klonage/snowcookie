@@ -15,12 +15,16 @@ using namespace SnowCookie;
 
 std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (unsigned char * buffer, int size)
 {
-	assert (size > 0);
+	assert (size > 2);
 
 	switch (buffer [0])
 	{
 	case GET_STATUS:
-		return std::make_shared <GetStatusEdisonFrame> (buffer, size);
+	{
+		auto f = std::make_shared <GetStatusEdisonFrame> (buffer, size);
+		f->err_flag = buffer [1];
+		return f;
+	}
 	default:
 		throw std::runtime_error ("invalid frame type");
 	}
@@ -34,14 +38,16 @@ int EdisonFrame::serialize (unsigned char* data)
 	return 2;
 }
 
-GetStatusEdisonFrame::GetStatusEdisonFrame (unsigned char* buffer, int size)
+GetStatusEdisonFrame::GetStatusEdisonFrame (unsigned char* buffer, int buffer_size)
 : EdisonFrame (GET_STATUS)
 {
-	assert (size > 1);
-	request = buffer [1];
+	request = buffer [2];
 
 	if (request)
 		return;
+
+	// todo might be incorrect for some platforms
+	memcpy ((char*)& size, buffer + 3, sizeof (size));
 }
 
 void GetStatusEdisonFrame::set_data (int log_count)

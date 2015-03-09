@@ -8,6 +8,9 @@
 #ifndef DIAGNOSTIC_MAINWINDOW_H_
 #define DIAGNOSTIC_MAINWINDOW_H_
 
+#include "protocol/data_parser.h"
+#include "protocol/edison_frame.h"
+
 #include <QMainWindow>
 #include <QtNetwork/QTcpSocket>
 
@@ -19,6 +22,8 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
+	SnowCookie::DataParser parser;
+
 	// todo multidefinition
 	const unsigned char end_character = 0x0A;
 	const unsigned char substitute_character = 0x1A;
@@ -28,7 +33,11 @@ class MainWindow : public QMainWindow
 
 	QTcpSocket* socket = nullptr;
 
-	void read_data ();
+	Q_SLOT void read_data ();
+
+	void handle_buffer(SnowCookie::DataBuffer buffer);
+
+	void update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame> frame);
 
 	Q_SLOT void on_connect_clicked ();
 

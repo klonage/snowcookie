@@ -17,7 +17,7 @@ void DataParser::register_handler (std::function<void(DataBuffer)> func)
 	on_frame_parsed = func;
 }
 
-void DataParser::append_bytes (char buff[], int size)
+void DataParser::append_bytes (const char* buff, int size)
 {
 	for (int i = 0; i < size; i++)
 	{
@@ -39,7 +39,7 @@ void DataParser::parse_frame ()
 {
 	unsigned char new_data [max_bytes];
 
-	int size = unpack_frame (new_data, current_ptr - 1, substitute_character, xor_character);
+	int size = unpack_frame (data, current_ptr - 1, new_data, substitute_character, xor_character);
 
 	if (!check_crc (new_data, size-1, new_data[size - 1]))
 	{

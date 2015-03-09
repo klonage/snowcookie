@@ -66,7 +66,7 @@
      <rect>
       <x>350</x>
       <y>30</y>
-      <width>161</width>
+      <width>241</width>
       <height>141</height>
      </rect>
     </property>
@@ -86,7 +86,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Disk usage:</string>
+          <string>Disk usage [MB]:</string>
          </property>
         </widget>
        </item>
