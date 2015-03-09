@@ -38,7 +38,7 @@ public:
 
 	Type get_type () const { return frame_type; }
 
-	virtual int serialize (char* data);
+	virtual int serialize (unsigned char* data);
 };
 
 class GetStatusEdisonFrame : public EdisonFrame
@@ -47,11 +47,14 @@ class GetStatusEdisonFrame : public EdisonFrame
 	long long size = 0;
 public:
 	virtual ~GetStatusEdisonFrame () {}
+	GetStatusEdisonFrame () : EdisonFrame (GET_STATUS) { request = true; }
 	GetStatusEdisonFrame (unsigned char* buffer, int size);
 
 	void set_data (int log_count);
 
-	int serialize (char* data) override;
+	int serialize (unsigned char* data) override;
+
+	static constexpr int max_size = 3 + sizeof (long long);
 };
 
 }

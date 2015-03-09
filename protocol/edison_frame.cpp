@@ -26,7 +26,7 @@ std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (unsigned char * buffer, i
 	}
 }
 
-int EdisonFrame::serialize (char* data)
+int EdisonFrame::serialize (unsigned char* data)
 {
 	data [0] = frame_type;
 	data [1] = err_flag;
@@ -55,9 +55,12 @@ void GetStatusEdisonFrame::set_data (int log_count)
 		size = fiData.f_bsize * fiData.f_bfree;
 }
 
-int GetStatusEdisonFrame::serialize (char* data)
+int GetStatusEdisonFrame::serialize (unsigned char* data)
 {
 	int curr_ptr = EdisonFrame::serialize (data);
+	data [curr_ptr++] = request;
+	if (request)
+		return curr_ptr;
 
 	memcpy (data + curr_ptr, (char*)&size, sizeof (size)); curr_ptr += sizeof (size);
 

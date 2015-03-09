@@ -19,6 +19,11 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
+	// todo multidefinition
+	const unsigned char end_character = 0x0A;
+	const unsigned char substitute_character = 0x1A;
+	const unsigned char xor_character = 0x33;
+
 	Ui::MainWindow *ui;
 
 	QTcpSocket* socket = nullptr;

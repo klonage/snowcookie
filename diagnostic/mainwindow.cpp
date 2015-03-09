@@ -7,9 +7,13 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "protocol/edison_frame.h"
+#include "protocol/protocol_utils.h"
 
 #include <QPushButton>
 #include <QMessageBox>
+
+using namespace SnowCookie;
 
 MainWindow::MainWindow(QWidget *parent) :
 QMainWindow(parent),
@@ -17,7 +21,16 @@ ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 
-	QObject::connect(ui->connectButton, &QPushButton::clicked, this, &MainWindow::on_connect_clicked);
+	QObject::connect (ui->connectButton, &QPushButton::clicked, this, &MainWindow::on_connect_clicked);
+
+	QObject::connect (ui->reloadStatusButton, &QPushButton::clicked, [this] {
+		GetStatusEdisonFrame frame;
+		unsigned char data [GetStatusEdisonFrame::max_size], dest [GetStatusEdisonFrame::max_size * 2 + 1];
+		int size = frame.serialize (data);
+		size = pack_frame (data, size, dest, substitute_character, xor_character, end_character);
+		QByteArray arr ((char*) dest, size);
+		socket->write (arr);
+	});
 }
 
 MainWindow::~MainWindow()
