@@ -23,7 +23,7 @@ public:
 		START_LOG,
 		STOP_LOG,
 		REBOOT,
-		SET_DATA_OUT_DIVISOR
+		DIVISOR,
 	};
 
 protected:
@@ -72,6 +72,26 @@ public:
 	int serialize (char* data) const override;
 
 	static constexpr int max_size = 3;
+};
+
+class DivisorEdisonFrame : public EdisonFrame
+{
+	char dest;
+	int location;
+	int divisor;
+public:
+	virtual ~DivisorEdisonFrame () {}
+	DivisorEdisonFrame (char* buffer, int size);
+	DivisorEdisonFrame (char dest, int location, int divisor)
+	: EdisonFrame (DIVISOR), dest (dest), location (location), divisor (divisor) {}
+
+	int serialize (char* data) const override;
+
+	int get_location () const { return location ; }
+	int get_divisor () const { return divisor ; }
+	int get_dest () const { return dest; }
+
+	static constexpr int max_size = 4 + sizeof(location) + sizeof(divisor);
 };
 
 }

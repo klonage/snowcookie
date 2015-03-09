@@ -23,6 +23,9 @@ int LogManager::get_log_count () const { return log_files.size (); }
 
 void LogManager::start_log (const std::string& filename)
 {
+	if (file.is_open ())
+		return;
+
 	file.open(filename, std::ios::out | std::ios::binary);
 
 	if (!file.is_open())
@@ -113,4 +116,9 @@ std::string LogManager::get_dated_filename ()
 		return std::string(mbstr);
 	}
 	return "log_unknown";
+}
+
+void LogManager::update_divisor (int location, int divisor)
+{
+	this->divisor.set_division(location, divisor);
 }

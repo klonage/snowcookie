@@ -35,6 +35,12 @@ std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (char * buffer, int size)
 		f->err_flag = buffer [1];
 		return f;
 	}
+	case DIVISOR:
+	{
+		auto f = std::make_shared <DivisorEdisonFrame> (buffer, size);
+		f->err_flag = buffer [1];
+		return f;
+	}
 	default:
 		throw std::runtime_error ("invalid frame type");
 	}
@@ -98,4 +104,22 @@ int GetStatusEdisonFrame::serialize (char* data) const
 int SimpleLogEdisonFrame::serialize (char* data) const
 {
 	return EdisonFrame::serialize (data);
+}
+
+DivisorEdisonFrame::DivisorEdisonFrame (char* buffer, int size)
+ : EdisonFrame (DIVISOR)
+{
+	dest = buffer[2];
+	memcpy ((char*)& location, buffer + 3, sizeof (location));
+	memcpy ((char*)& divisor, buffer + 3 + sizeof(location), sizeof (divisor));
+}
+
+int DivisorEdisonFrame::serialize (char* data) const
+{
+	int curr_ptr = EdisonFrame::serialize (data);
+	data[curr_ptr++] = dest;
+	memcpy (data + curr_ptr, (char*)&location, sizeof (location)); curr_ptr += sizeof (location);
+	memcpy (data + curr_ptr, (char*)&divisor, sizeof (divisor)); curr_ptr += sizeof (divisor);
+
+	return curr_ptr;
 }

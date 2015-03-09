@@ -9,7 +9,7 @@
 using namespace SnowCookie;
 
 ClientService::ClientService(std::shared_ptr<LogManager> log_manager, int sock_fd)
- : sock_fd(sock_fd), divisor(0, 500, 0), log_manager(log_manager)
+: sock_fd(sock_fd), divisor(0, 0, 0), log_manager(log_manager)
 {
 	parser.register_handler ([this] (DataBuffer buffer) {
 		on_buffer_parsed (buffer);
@@ -45,31 +45,47 @@ void ClientService::close()
 
 void ClientService::on_buffer_parsed (const DataBuffer& buffer)
 {
-	auto frame = EdisonFrame::parse_frame (buffer.frame, buffer.frame_size);
-	switch (frame->get_type ())
+	try
 	{
-	case EdisonFrame::GET_STATUS:
-	{
-		GetStatusEdisonFrame f (false);
-		f.set_data (log_manager->get_log_count ());
-		char dest [128];
-		int s = EdisonFrame::pack_and_serialize(f, dest);
-		send (sock_fd, dest, s, 0);
-		break;
+		auto frame = EdisonFrame::parse_frame (buffer.frame, buffer.frame_size);
+		switch (frame->get_type ())
+		{
+		case EdisonFrame::GET_STATUS:
+		{
+			GetStatusEdisonFrame f (false);
+			f.set_data (log_manager->get_log_count ());
+			char dest [128];
+			int s = EdisonFrame::pack_and_serialize(f, dest);
+			send (sock_fd, dest, s, 0);
+			break;
+		}
+		case EdisonFrame::CLEAR_LOGS:
+			log_manager->remove_logs ();
+			break;
+		case EdisonFrame::STOP_LOG:
+			log_manager->stop_log ();
+			break;
+		case EdisonFrame::START_LOG:
+			log_manager->start_log (LogManager::get_dated_filename ());
+			break;
+		case EdisonFrame::DIVISOR:
+		{
+			auto f = std::static_pointer_cast<DivisorEdisonFrame> (frame);
+			if (f->get_dest () == 1)
+				log_manager->update_divisor (f->get_location(), f->get_divisor());
+			else if (f->get_dest () == 0)
+				divisor.set_division (f->get_location(), f->get_divisor());
+			break;
+		}
+		case 'S': // to stm
+			server->pass_to_device (buffer.frame, buffer.frame_size);
+			break;
+		default:
+			break;// edison handler
+		}
 	}
-	case EdisonFrame::CLEAR_LOGS:
-		log_manager->remove_logs ();
-		break;
-	case EdisonFrame::STOP_LOG:
-		log_manager->stop_log ();
-		break;
-	case EdisonFrame::START_LOG:
-		log_manager->start_log (LogManager::get_dated_filename ());
-		break;
-	case 'S': // to stm
-		server->pass_to_device (buffer.frame, buffer.frame_size);
-		break;
-	default:
-		break;// edison handler
+	catch (const std::exception& ex)
+	{
+		Logger::log ("exception during processing frame: ", ex.what());
 	}
 }

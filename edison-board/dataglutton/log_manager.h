@@ -40,6 +40,8 @@ public:
 	int get_log_count () const;
 	void remove_logs ();
 
+	void update_divisor (int location, int divisor);
+
 	void register_log_handler (int num, std::function<void(DataBuffer)> fun);
 	void unregister_handler (int num);
 

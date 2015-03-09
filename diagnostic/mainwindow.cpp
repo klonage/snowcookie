@@ -41,6 +41,17 @@ ui(new Ui::MainWindow)
 	QObject::connect (ui->clearLogPushButton, &QPushButton::clicked, [this] {
 		send_simple_log (EdisonFrame::CLEAR_LOGS);
 	});
+	QObject::connect (ui->setDivisorPushButton, &QPushButton::clicked, [this] {
+		DivisorEdisonFrame frame (
+				(char)ui->destLineEdit->text().toInt(),
+				ui->locationLineEdit->text().toInt(),
+				ui->divisorLineEdit->text().toInt()
+				);
+		char dest [DivisorEdisonFrame::max_size * 2 + 1];
+		int size = EdisonFrame::pack_and_serialize(frame, dest);
+		QByteArray arr ((char*) dest, size);
+		socket->write (arr);
+	});
 }
 
 void MainWindow::send_simple_log (EdisonFrame::Type t)
