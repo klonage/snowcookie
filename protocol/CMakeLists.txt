@@ -1,1 +1,1 @@
-add_library(snow-protocol protocol_utils.cpp data_parser.cpp)
+add_library(snow-protocol protocol_utils.cpp data_parser.cpp edison_frame.cpp)
