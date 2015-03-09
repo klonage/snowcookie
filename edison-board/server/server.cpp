@@ -13,8 +13,8 @@
 
 using namespace SnowCookie;
 
-Server::Server(int port, std::shared_ptr<ServiceManager> manager)
-: SnowCookie::BgService (manager), port(port)
+Server::Server(int port, std::shared_ptr<LogManager> log_manager, std::shared_ptr<ServiceManager> manager)
+: SnowCookie::BgService (manager), port(port), log_manager (log_manager)
 {
 }
 
@@ -74,7 +74,7 @@ void Server::request_handler(int client_fd)
 
 	thread_count++;
 	std::thread t([client_fd, this] {
-		ClientService(client_fd).service([this]{thread_finished();});
+		ClientService(log_manager, client_fd).service([this]{thread_finished();});
 	});
 	t.detach();
 }

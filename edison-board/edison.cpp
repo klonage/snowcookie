@@ -1,6 +1,7 @@
 #include "server/server.h"
 #include "service_manager.h"
 #include "logger.h"
+#include "dataglutton/log_manager.h"
 
 #include <thread>
 #include <condition_variable>
@@ -24,39 +25,22 @@ void signal_handler(int sig)
 	cv.notify_all();
 }
 
-std::string get_dated_filename()
-{
-	std::time_t t = std::time(NULL);
-	char mbstr[30];
-	if (std::strftime(mbstr, sizeof(mbstr), "log_%Y-%m-%d-%H-%M-%S.txt", std::localtime(&t))) {
-		return std::string(mbstr);
-	}
-	return "log_unknown";
-}
-
 int main(int argc, char** argv)
 {
 	std::shared_ptr<ServiceManager> manager = std::make_shared<ServiceManager> ();
 	int port = 12345;
-	std::string filename = get_dated_filename();
 
 	if (argc > 1)
 	{
 		port = atoi(argv[1]);
-
-		if (argc > 2)
-		{
-			filename = argv[2];
-		}
 	}
 
-	filename = DataWriter::generate_unique_filename(filename);
-
 	Logger::log ("Port: ", port);
-	Logger::log ("Destination file name: ", filename);
 
-	manager->register_service(std::make_shared<Server>(port, manager), ServiceType::TCP_SERVER);
-	manager->register_service(std::make_shared<DataWriter>(filename, manager), ServiceType::UART_DEVICE);
+	auto log_manager = std::make_shared<LogManager> ();
+
+	manager->register_service(std::make_shared<Server>(port, log_manager, manager), ServiceType::TCP_SERVER);
+	manager->register_service(std::make_shared<DataWriter>(log_manager, manager), ServiceType::UART_DEVICE);
 
 	signal(SIGINT, signal_handler);
 

@@ -3,6 +3,7 @@
 
 #include "server.h"
 
+#include "dataglutton/divisor.h"
 #include "protocol/data_parser.h"
 
 #include <functional>
@@ -15,15 +16,17 @@ private:
 	static constexpr int max_buffer_size = 256;
 	int sock_fd;
 
+	Divisor divisor;
 	DataParser parser;
 	std::shared_ptr<Server> server;
+	std::shared_ptr<LogManager> log_manager;
 
 	void close();
 	void on_buffer_parsed (const DataBuffer& buffer);
 
 public:
-	ClientService(int sock_fd);
-	virtual ~ClientService() {}
+	ClientService(std::shared_ptr<LogManager> log_manager, int sock_fd);
+	virtual ~ClientService() {log_manager->unregister_handler(sock_fd);}
 
 	void service(std::function<void()> finish_handler);
 };

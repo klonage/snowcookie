@@ -27,6 +27,14 @@ std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (char * buffer, int size)
 		f->err_flag = buffer [1];
 		return f;
 	}
+	case CLEAR_LOGS:
+	case START_LOG:
+	case STOP_LOG:
+	{
+		auto f = std::make_shared <SimpleLogEdisonFrame> ((Type)buffer[0]);
+		f->err_flag = buffer [1];
+		return f;
+	}
 	default:
 		throw std::runtime_error ("invalid frame type");
 	}
@@ -85,4 +93,9 @@ int GetStatusEdisonFrame::serialize (char* data) const
 	memcpy (data + curr_ptr, (char*)&log_count, sizeof (log_count)); curr_ptr += sizeof (log_count);
 
 	return curr_ptr;
+}
+
+int SimpleLogEdisonFrame::serialize (char* data) const
+{
+	return EdisonFrame::serialize (data);
 }

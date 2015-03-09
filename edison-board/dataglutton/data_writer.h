@@ -2,6 +2,7 @@
 #define _SNOWCOOKIE_DATA_READER_H
 
 #include "bg_service.h"
+#include "log_manager.h"
 
 #include "protocol/data_parser.h"
 #include <fstream>
@@ -14,16 +15,14 @@ namespace SnowCookie {
 
 class DataWriter : public BgService
 {
-	std::ofstream file;
-	std::string filename;
-
 	std::shared_ptr<IPlugDevice> data_provider;
+	std::shared_ptr<LogManager> log_manager;
 	DataParser parser;
 
 	void close();
 
 public:
-	DataWriter(const std::string& filename, std::shared_ptr<ServiceManager> manager);
+	DataWriter(std::shared_ptr<LogManager> log_manager, std::shared_ptr<ServiceManager> manager);
 	virtual ~DataWriter() {}
 
 	void init() override;
@@ -32,9 +31,6 @@ public:
 
 	std::string get_name() const override
 	{ return std::string("data reader"); }
-
-	// todo to another class
-	static std::string generate_unique_filename(std::string name);
 };
 
 }

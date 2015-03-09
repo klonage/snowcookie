@@ -5,6 +5,8 @@
 
 #include "protocol/data_parser.h"
 
+#include "dataglutton/log_manager.h"
+
 #include <atomic>
 
 namespace SnowCookie {
@@ -18,10 +20,12 @@ class Server : public BgService
 	static constexpr int max_buffer_size = 256;
 	static constexpr int max_connections = 5;
 
+	std::shared_ptr<LogManager> log_manager;
+
 	void request_handler(int client_fd);
 	void thread_finished();
 public:
-	Server(int port, std::shared_ptr<ServiceManager> manager);
+	Server(int port, std::shared_ptr<LogManager> log_manager, std::shared_ptr<ServiceManager> manager);
 	virtual ~Server(){}
 
 	void init() override;

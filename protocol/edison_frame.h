@@ -63,6 +63,17 @@ public:
 	int get_log_count () const { return log_count; }
 };
 
+class SimpleLogEdisonFrame : public EdisonFrame
+{
+public:
+	virtual ~SimpleLogEdisonFrame () {}
+	SimpleLogEdisonFrame (Type type) : EdisonFrame (type) {}
+
+	int serialize (char* data) const override;
+
+	static constexpr int max_size = 3;
+};
+
 }
 
 #endif /* EDISON_FRAME_H_ */

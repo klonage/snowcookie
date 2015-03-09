@@ -31,6 +31,25 @@ ui(new Ui::MainWindow)
 		QByteArray arr ((char*) dest, size);
 		socket->write (arr);
 	});
+
+	QObject::connect (ui->startLogPushButton, &QPushButton::clicked, [this] {
+		send_simple_log (EdisonFrame::START_LOG);
+	});
+	QObject::connect (ui->stopLogPushButton, &QPushButton::clicked, [this] {
+		send_simple_log (EdisonFrame::STOP_LOG);
+	});
+	QObject::connect (ui->clearLogPushButton, &QPushButton::clicked, [this] {
+		send_simple_log (EdisonFrame::CLEAR_LOGS);
+	});
+}
+
+void MainWindow::send_simple_log (EdisonFrame::Type t)
+{
+	SimpleLogEdisonFrame frame (t);
+	char dest [SimpleLogEdisonFrame::max_size * 2 + 1];
+	int size = frame.pack_and_serialize(frame, dest);
+	QByteArray arr ((char*) dest, size);
+	socket->write (arr);
 }
 
 MainWindow::~MainWindow()

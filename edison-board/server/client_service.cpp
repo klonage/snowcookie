@@ -8,11 +8,18 @@
 
 using namespace SnowCookie;
 
-ClientService::ClientService(int sock_fd)
- : sock_fd(sock_fd)
+ClientService::ClientService(std::shared_ptr<LogManager> log_manager, int sock_fd)
+ : sock_fd(sock_fd), divisor(0, 500, 0), log_manager(log_manager)
 {
 	parser.register_handler ([this] (DataBuffer buffer) {
 		on_buffer_parsed (buffer);
+	});
+
+	log_manager->register_log_handler (sock_fd, [this](DataBuffer buffer) {
+		divisor.update (buffer.frame [0]);
+		if (!divisor.can_push (buffer.frame[0]))
+			return;
+		write (this->sock_fd, buffer.data, buffer.size);
 	});
 }
 
@@ -44,12 +51,21 @@ void ClientService::on_buffer_parsed (const DataBuffer& buffer)
 	case EdisonFrame::GET_STATUS:
 	{
 		GetStatusEdisonFrame f (false);
-		f.set_data (10);
+		f.set_data (log_manager->get_log_count ());
 		char dest [128];
 		int s = EdisonFrame::pack_and_serialize(f, dest);
 		send (sock_fd, dest, s, 0);
 		break;
 	}
+	case EdisonFrame::CLEAR_LOGS:
+		log_manager->remove_logs ();
+		break;
+	case EdisonFrame::STOP_LOG:
+		log_manager->stop_log ();
+		break;
+	case EdisonFrame::START_LOG:
+		log_manager->start_log (LogManager::get_dated_filename ());
+		break;
 	case 'S': // to stm
 		server->pass_to_device (buffer.frame, buffer.frame_size);
 		break;

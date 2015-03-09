@@ -31,7 +31,7 @@ class MainWindow : public QMainWindow
 	Q_SLOT void read_data ();
 
 	void handle_buffer(SnowCookie::DataBuffer buffer);
-
+	void send_simple_log (SnowCookie::EdisonFrame::Type t);
 	void update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame> frame);
 
 	Q_SLOT void on_connect_clicked ();
