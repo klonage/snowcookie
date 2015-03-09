@@ -7,13 +7,15 @@
 
 #include "edison_frame.h"
 
+#include "protocol/protocol_utils.h"
+
 #include <cstring>
 #include <sys/statvfs.h>
 #include <cassert>
 
 using namespace SnowCookie;
 
-std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (unsigned char * buffer, int size)
+std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (char * buffer, int size)
 {
 	assert (size > 2);
 
@@ -30,7 +32,7 @@ std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (unsigned char * buffer, i
 	}
 }
 
-int EdisonFrame::serialize (unsigned char* data)
+int EdisonFrame::serialize (char* data) const
 {
 	data [0] = frame_type;
 	data [1] = err_flag;
@@ -38,7 +40,16 @@ int EdisonFrame::serialize (unsigned char* data)
 	return 2;
 }
 
-GetStatusEdisonFrame::GetStatusEdisonFrame (unsigned char* buffer, int buffer_size)
+
+int EdisonFrame::pack_and_serialize (const EdisonFrame& frame, char* data)
+{
+	// todo magic number
+	char d [256];
+	int size = frame.serialize (d);
+	return pack_frame (d, size, data);
+}
+
+GetStatusEdisonFrame::GetStatusEdisonFrame (char* buffer, int buffer_size)
 : EdisonFrame (GET_STATUS)
 {
 	request = buffer [2];
@@ -48,6 +59,7 @@ GetStatusEdisonFrame::GetStatusEdisonFrame (unsigned char* buffer, int buffer_si
 
 	// todo might be incorrect for some platforms
 	memcpy ((char*)& size, buffer + 3, sizeof (size));
+	memcpy ((char*)& log_count, buffer + 3 + sizeof (size), sizeof (log_count));
 }
 
 void GetStatusEdisonFrame::set_data (int log_count)
@@ -59,9 +71,10 @@ void GetStatusEdisonFrame::set_data (int log_count)
 		err_flag = true;
 	else
 		size = fiData.f_bsize * fiData.f_bfree;
+	this->log_count = log_count;
 }
 
-int GetStatusEdisonFrame::serialize (unsigned char* data)
+int GetStatusEdisonFrame::serialize (char* data) const
 {
 	int curr_ptr = EdisonFrame::serialize (data);
 	data [curr_ptr++] = request;
@@ -69,6 +82,7 @@ int GetStatusEdisonFrame::serialize (unsigned char* data)
 		return curr_ptr;
 
 	memcpy (data + curr_ptr, (char*)&size, sizeof (size)); curr_ptr += sizeof (size);
+	memcpy (data + curr_ptr, (char*)&log_count, sizeof (log_count)); curr_ptr += sizeof (log_count);
 
 	return curr_ptr;
 }

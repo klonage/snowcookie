@@ -10,12 +10,16 @@
 
 namespace SnowCookie {
 
-bool check_crc (unsigned char *data, int size, char expected_crc);
+const char end_character = 0x0A;
+const char substitute_character = 0x1A;
+const char xor_character = 0x33;
 
-int unpack_frame (unsigned char *data, int size, unsigned char* destination, char substitute_char, char xor_char);
+bool check_crc (char *data, int size, char expected_crc);
+
+int unpack_frame (char *data, int size, char* destination);
 
 // this method adds crc and end frame character, returns new data size
-int pack_frame (unsigned char *data, int size, unsigned char* destination, char substitute_char, char xor_char, char end_char);
+int pack_frame (char *data, int size, char* destination);
 
 }
 

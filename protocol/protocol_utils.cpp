@@ -9,7 +9,7 @@
 
 namespace SnowCookie {
 
-static char calculate_crc (unsigned char * data, int size)
+static char calculate_crc (char * data, int size)
 {
 	char crc = 0;
 	for (int i = 0; i < size; i++)
@@ -18,22 +18,22 @@ static char calculate_crc (unsigned char * data, int size)
 	return crc;
 }
 
-bool check_crc (unsigned char *data, int size, char expected_crc)
+bool check_crc (char *data, int size, char expected_crc)
 {
 	char crc = calculate_crc (data, size);
 
 	return crc == expected_crc;
 }
 
-int unpack_frame (unsigned char *data, int size, unsigned char* destination, char substitute_char, char xor_char)
+int unpack_frame (char *data, int size, char* destination)
 {
 	int new_size = 0;
 
 	for (int i = 0; i < size; i++)
 	{
-		if (data [i] == substitute_char)
+		if (data [i] == substitute_character)
 		{
-			destination [new_size++] = (char)(data [i + 1] ^ xor_char);
+			destination [new_size++] = (char)(data [i + 1] ^ xor_character);
 			i++;
 		}
 		else
@@ -43,32 +43,32 @@ int unpack_frame (unsigned char *data, int size, unsigned char* destination, cha
 	return new_size;
 }
 
-int pack_frame (unsigned char *data, int size, unsigned char* destination, char substitute_char, char xor_char, char end_char)
+int pack_frame (char *data, int size, char* destination)
 {
 	int new_size = 0;
 	char crc = calculate_crc (data, size);
 
 	for (int i = 0; i < size; i++)
 	{
-		if (data[i] != end_char && data[i] != substitute_char)
+		if (data[i] != end_character && data[i] != substitute_character)
 			destination[new_size++] = data[i];
 		else
 		{
-			destination [new_size++] = substitute_char;
-			destination [new_size++] = data [i] ^ xor_char;
+			destination [new_size++] = substitute_character;
+			destination [new_size++] = data [i] ^ xor_character;
 		}
 	}
 
 	// todo refactor me!
-	if (crc != end_char && crc != substitute_char)
+	if (crc != end_character && crc != substitute_character)
 		destination[new_size++] = crc;
 	else
 	{
-		destination [new_size++] = substitute_char;
-		destination [new_size++] = crc ^ xor_char;
+		destination [new_size++] = substitute_character;
+		destination [new_size++] = crc ^ xor_character;
 	}
 
-	destination[new_size++] = end_char;
+	destination[new_size++] = end_character;
 
 	return new_size;
 }

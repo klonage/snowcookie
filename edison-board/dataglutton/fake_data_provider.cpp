@@ -51,7 +51,7 @@ void FakeDataProvider::close ()
 	Logger::log ("Generated: ", counter, " data packets(total size: ", total, " bytes)");
 }
 
-int FakeDataProvider::write_data (unsigned char buffer[], int size)
+int FakeDataProvider::write_data (char buffer[], int size)
 {
 	Logger::log ("Has data in fake data provider of length", size);
 	return size;

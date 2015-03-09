@@ -38,19 +38,15 @@ void ClientService::close()
 
 void ClientService::on_buffer_parsed (const DataBuffer& buffer)
 {
-	// todo !!!
-	const unsigned char end_character = 0x0A;
-	const char substitute_character = 0x1A;
-	const char xor_character = 0x33;
 	auto frame = EdisonFrame::parse_frame (buffer.frame, buffer.frame_size);
 	switch (frame->get_type ())
 	{
 	case EdisonFrame::GET_STATUS:
 	{
-		GetStatusEdisonFrame f (false); f.set_data (10);
-		unsigned char dest [128];
-		unsigned char d [128]; unsigned long int s = f.serialize(d);
-		s = pack_frame (d, s, dest, substitute_character, xor_character, end_character);
+		GetStatusEdisonFrame f (false);
+		f.set_data (10);
+		char dest [128];
+		int s = EdisonFrame::pack_and_serialize(f, dest);
 		send (sock_fd, dest, s, 0);
 		break;
 	}

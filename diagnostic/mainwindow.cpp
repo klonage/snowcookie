@@ -25,9 +25,9 @@ ui(new Ui::MainWindow)
 
 	QObject::connect (ui->reloadStatusButton, &QPushButton::clicked, [this] {
 		GetStatusEdisonFrame frame;
-		unsigned char data [GetStatusEdisonFrame::max_size], dest [GetStatusEdisonFrame::max_size * 2 + 1];
+		char data [GetStatusEdisonFrame::max_size], dest [GetStatusEdisonFrame::max_size * 2 + 1];
 		int size = frame.serialize (data);
-		size = pack_frame (data, size, dest, substitute_character, xor_character, end_character);
+		size = pack_frame (data, size, dest);
 		QByteArray arr ((char*) dest, size);
 		socket->write (arr);
 	});
@@ -88,4 +88,5 @@ void MainWindow::handle_buffer(SnowCookie::DataBuffer buffer)
 void MainWindow::update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame> frame)
 {
 	ui->diskUsageLabel->setText (QString::number (frame->get_size ()/1024/1024.0, 'f', 3));
+	ui->logFilesCountLabel->setText (QString::number (frame->get_log_count ()));
 }

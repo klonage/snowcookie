@@ -94,7 +94,7 @@ void Server::thread_finished()
 	Logger::log ("thread finished, ", thread_count, " thread(s) left");
 }
 
-void Server::pass_to_device (unsigned char *buffer, int size)
+void Server::pass_to_device (char *buffer, int size)
 {
 	auto device = manager->get_service<IPlugDevice> (ServiceType::UART_DEVICE);
 	if (device)

@@ -46,7 +46,7 @@ void UartDevice::close ()
 	::close (uart_fd);
 }
 
-int UartDevice::write_data (unsigned char buffer[], int size)
+int UartDevice::write_data (char buffer[], int size)
 {
 	return write (uart_fd, buffer, size);
 }

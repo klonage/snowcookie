@@ -37,9 +37,9 @@ void DataParser::append_bytes (const char* buff, int size)
 
 void DataParser::parse_frame ()
 {
-	unsigned char new_data [max_bytes];
+	char new_data [max_bytes];
 
-	int size = unpack_frame (data, current_ptr - 1, new_data, substitute_character, xor_character);
+	int size = unpack_frame (data, current_ptr - 1, new_data);
 
 	if (!check_crc (new_data, size-1, new_data[size - 1]))
 	{

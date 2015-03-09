@@ -31,7 +31,7 @@ public:
 	std::string get_name() const override
 	{ return std::string("tcp server"); }
 
-	void pass_to_device (unsigned char *buffer, int size);
+	void pass_to_device (char *buffer, int size);
 };
 
 }

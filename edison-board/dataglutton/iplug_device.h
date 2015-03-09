@@ -18,7 +18,7 @@ public:
 	virtual ~IPlugDevice () {}
 
 	virtual int read_data (char buffer[], int max_size) = 0;
-	virtual int write_data (unsigned char buffer[], int size) = 0;
+	virtual int write_data (char buffer[], int size) = 0;
 	virtual void init (const std::string& source) = 0;
 	virtual void close () = 0;
 };

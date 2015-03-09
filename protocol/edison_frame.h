@@ -34,29 +34,33 @@ public:
 	EdisonFrame (Type type) : frame_type (type) {}
 	virtual ~EdisonFrame () {}
 
-	static std::shared_ptr<EdisonFrame> parse_frame (unsigned char* buffer, int size);
+	static std::shared_ptr<EdisonFrame> parse_frame (char* buffer, int size);
 
 	Type get_type () const { return frame_type; }
 
-	virtual int serialize (unsigned char* data);
+	virtual int serialize (char* data) const = 0;
+
+	static int pack_and_serialize (const EdisonFrame& frame, char* data);
 };
 
 class GetStatusEdisonFrame : public EdisonFrame
 {
 	bool request;
 	long long size = 0;
+	int log_count = 0;
 public:
 	virtual ~GetStatusEdisonFrame () {}
 	GetStatusEdisonFrame (bool request = true) : EdisonFrame (GET_STATUS), request (request) {}
-	GetStatusEdisonFrame (unsigned char* buffer, int size);
+	GetStatusEdisonFrame (char* buffer, int size);
 
 	void set_data (int log_count);
 
-	int serialize (unsigned char* data) override;
+	int serialize (char* data) const override;
 
-	static constexpr int max_size = 3 + sizeof (long long);
+	static constexpr int max_size = 3 + sizeof (long long) + sizeof (int);
 
 	long long get_size () const { return size; }
+	int get_log_count () const { return log_count; }
 };
 
 }
