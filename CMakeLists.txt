@@ -14,5 +14,6 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
+add_subdirectory(protocol)
 add_subdirectory(edison-board)
 add_subdirectory(diagnostic)

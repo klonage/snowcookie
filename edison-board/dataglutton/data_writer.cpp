@@ -33,7 +33,9 @@ void DataWriter::init()
 		throw std::runtime_error("cannot open file: " + filename);
 
 	parser.register_handler ([this] (DataBuffer buffer) {
-		file.write ((char*)&buffer.timestamp, sizeof(buffer.timestamp));
+		auto now = std::chrono::high_resolution_clock::now ();
+		long long timestamp = std::chrono::duration_cast<std::chrono::microseconds> (now.time_since_epoch ()).count ();
+		file.write ((char*)&timestamp, sizeof(timestamp));
 		file.write ((char*)buffer.data, buffer.size);
 	});
 }

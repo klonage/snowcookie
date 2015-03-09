@@ -15,7 +15,6 @@ namespace SnowCookie {
 struct DataBuffer
 {
 	unsigned char *data;
-	long long timestamp;
 	int size;
 	unsigned char *frame;
 	int frame_size;
@@ -34,11 +33,7 @@ class DataParser
 
 	std::function<void(DataBuffer)> on_frame_parsed;
 
-	bool check_crc (unsigned char *data, int new_size) const;
-
 	void parse_frame ();
-
-	int unpack_frame (unsigned char *data);
 
 public:
 	virtual ~DataParser () {}

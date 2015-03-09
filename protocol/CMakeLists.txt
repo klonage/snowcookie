@@ -1,0 +1,1 @@
+add_library(snow-protocol protocol_utils.cpp data_parser.cpp)

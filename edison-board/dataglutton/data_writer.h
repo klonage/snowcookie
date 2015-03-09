@@ -3,7 +3,7 @@
 
 #include "bg_service.h"
 
-#include "data_parser.h"
+#include "protocol/data_parser.h"
 #include <fstream>
 #include <memory>
 #include <string>
