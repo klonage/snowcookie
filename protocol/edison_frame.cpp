@@ -17,30 +17,18 @@ using namespace SnowCookie;
 
 std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (char * buffer, int size)
 {
-	assert (size > 2);
+	assert (size > 1);
 
 	switch (buffer [0])
 	{
 	case GET_STATUS:
-	{
-		auto f = std::make_shared <GetStatusEdisonFrame> (buffer, size);
-		f->err_flag = buffer [1];
-		return f;
-	}
+		return std::make_shared <GetStatusEdisonFrame> (buffer, size);
 	case CLEAR_LOGS:
 	case START_LOG:
 	case STOP_LOG:
-	{
-		auto f = std::make_shared <SimpleLogEdisonFrame> ((Type)buffer[0]);
-		f->err_flag = buffer [1];
-		return f;
-	}
+		return std::make_shared <SimpleLogEdisonFrame> ((Type)buffer[0]);
 	case DIVISOR:
-	{
-		auto f = std::make_shared <DivisorEdisonFrame> (buffer, size);
-		f->err_flag = buffer [1];
-		return f;
-	}
+		return std::make_shared <DivisorEdisonFrame> (buffer, size);
 	default:
 		throw std::runtime_error ("invalid frame type");
 	}
@@ -49,9 +37,8 @@ std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (char * buffer, int size)
 int EdisonFrame::serialize (char* data) const
 {
 	data [0] = frame_type;
-	data [1] = err_flag;
 
-	return 2;
+	return 1;
 }
 
 
@@ -66,25 +53,21 @@ int EdisonFrame::pack_and_serialize (const EdisonFrame& frame, char* data)
 GetStatusEdisonFrame::GetStatusEdisonFrame (char* buffer, int buffer_size)
 : EdisonFrame (GET_STATUS)
 {
-	request = buffer [2];
+	request = buffer [1];
 
 	if (request)
 		return;
 
 	// todo might be incorrect for some platforms
-	memcpy ((char*)& size, buffer + 3, sizeof (size));
-	memcpy ((char*)& log_count, buffer + 3 + sizeof (size), sizeof (log_count));
+	memcpy ((char*)& size, buffer + 2, sizeof (size));
+	memcpy ((char*)& log_count, buffer + 2 + sizeof (size), sizeof (log_count));
 }
 
 void GetStatusEdisonFrame::set_data (int log_count)
 {
 	struct statvfs fiData;
-
-	// todo check directory
-	if ((statvfs ("/",&fiData)) < 0)
-		err_flag = true;
-	else
-		size = fiData.f_bsize * fiData.f_bfree;
+	statvfs ("/home",&fiData);
+	size = fiData.f_bsize * fiData.f_bfree;
 	this->log_count = log_count;
 }
 
@@ -110,8 +93,8 @@ DivisorEdisonFrame::DivisorEdisonFrame (char* buffer, int size)
  : EdisonFrame (DIVISOR)
 {
 	dest = buffer[2];
-	memcpy ((char*)& location, buffer + 3, sizeof (location));
-	memcpy ((char*)& divisor, buffer + 3 + sizeof(location), sizeof (divisor));
+	memcpy ((char*)& location, buffer + 2, sizeof (location));
+	memcpy ((char*)& divisor, buffer + 2 + sizeof(location), sizeof (divisor));
 }
 
 int DivisorEdisonFrame::serialize (char* data) const

@@ -21,6 +21,8 @@ ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 
+	ui->framesTreeWidget->setHeaderLabels({"frame type", "frame size"});
+
 	QObject::connect (ui->connectButton, &QPushButton::clicked, this, &MainWindow::on_connect_clicked);
 
 	QObject::connect (ui->reloadStatusButton, &QPushButton::clicked, [this] {
@@ -113,6 +115,10 @@ void MainWindow::handle_buffer(SnowCookie::DataBuffer buffer)
 	default:
 		break;
 	}
+
+	ui->framesTreeWidget->insertTopLevelItem(0, new QTreeWidgetItem({
+		QString::fromStdString(std::to_string(frame->get_type ())),
+				QString::fromStdString(std::to_string(buffer.frame_size))}));
 }
 
 void MainWindow::update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame> frame)

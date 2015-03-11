@@ -28,7 +28,6 @@ public:
 
 protected:
 	Type frame_type;
-	bool err_flag = false;
 
 public:
 	EdisonFrame (Type type) : frame_type (type) {}
@@ -57,7 +56,7 @@ public:
 
 	int serialize (char* data) const override;
 
-	static constexpr int max_size = 3 + sizeof (long long) + sizeof (int);
+	static constexpr int max_size = 2 + sizeof (long long) + sizeof (int);
 
 	long long get_size () const { return size; }
 	int get_log_count () const { return log_count; }
@@ -71,7 +70,7 @@ public:
 
 	int serialize (char* data) const override;
 
-	static constexpr int max_size = 3;
+	static constexpr int max_size = 2;
 };
 
 class DivisorEdisonFrame : public EdisonFrame
@@ -91,7 +90,7 @@ public:
 	int get_divisor () const { return divisor ; }
 	int get_dest () const { return dest; }
 
-	static constexpr int max_size = 4 + sizeof(location) + sizeof(divisor);
+	static constexpr int max_size = 3 + sizeof(location) + sizeof(divisor);
 };
 
 }
