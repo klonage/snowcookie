@@ -31,7 +31,8 @@ int FakeDataProvider::read_data (char buffer[], int max_size)
 	std::string t = "test";
 	assert (max_size >= 6);
 	std::copy(t.begin(), t.end(), buffer);
-	buffer[0] = 1;
+	buffer[0] = 20;
+	buffer[1] = 1;
 	buffer[4] = get_crc(buffer, t.length());
 	buffer[5] = 0x0A;
 	total += 6;

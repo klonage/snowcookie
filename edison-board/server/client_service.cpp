@@ -16,8 +16,8 @@ ClientService::ClientService(std::shared_ptr<LogManager> log_manager, int sock_f
 	});
 
 	log_manager->register_log_handler (sock_fd, [this](DataBuffer buffer) {
-		divisor.update (buffer.frame [0]);
-		if (!divisor.can_push (buffer.frame[0]))
+		divisor.update (buffer.frame [1]);
+		if (!divisor.can_push (buffer.frame[1]))
 			return;
 		write (this->sock_fd, buffer.data, buffer.size);
 	});

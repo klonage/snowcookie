@@ -67,14 +67,14 @@ void LogManager::unregister_handler (int num)
 
 void LogManager::write (DataBuffer buffer)
 {
-	divisor.update (buffer.frame [0]);
+	divisor.update (buffer.frame [1]);
 	for (auto h : handlers)
 		h.second (buffer);
 
 	if (paused)
 		return;
 
-	if (!divisor.can_push (buffer.frame [0]))
+	if (!divisor.can_push (buffer.frame [1]))
 		return;
 
 	auto now = std::chrono::high_resolution_clock::now ();

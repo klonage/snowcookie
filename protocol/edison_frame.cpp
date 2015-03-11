@@ -92,7 +92,7 @@ int SimpleLogEdisonFrame::serialize (char* data) const
 DivisorEdisonFrame::DivisorEdisonFrame (char* buffer, int size)
  : EdisonFrame (DIVISOR)
 {
-	dest = buffer[2];
+	dest = buffer[1];
 	memcpy ((char*)& location, buffer + 2, sizeof (location));
 	memcpy ((char*)& divisor, buffer + 2 + sizeof(location), sizeof (divisor));
 }

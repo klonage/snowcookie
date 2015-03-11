@@ -21,9 +21,13 @@ ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 
-	ui->framesTreeWidget->setHeaderLabels({"frame type", "frame size"});
+	ui->framesTreeWidget->setHeaderLabels({"frame type", "frame size", "frame data"});
 
 	QObject::connect (ui->connectButton, &QPushButton::clicked, this, &MainWindow::on_connect_clicked);
+
+	QObject::connect (ui->clearTreeButton, &QPushButton::clicked, [this] {
+		ui->framesTreeWidget->clear();
+	});
 
 	QObject::connect (ui->reloadStatusButton, &QPushButton::clicked, [this] {
 		GetStatusEdisonFrame frame;
@@ -105,20 +109,34 @@ void MainWindow::show_message (const std::string& msg)
 
 void MainWindow::handle_buffer(SnowCookie::DataBuffer buffer)
 {
-	auto frame = EdisonFrame::parse_frame (buffer.frame, buffer.size);
-
-	switch (frame->get_type ())
+	std::shared_ptr<EdisonFrame> frame;
+	bool err = false;
+	try
 	{
-	case EdisonFrame::GET_STATUS:
-		update_status (std::static_pointer_cast<GetStatusEdisonFrame>(frame));
-		break;
-	default:
-		break;
+		frame = EdisonFrame::parse_frame (buffer.frame, buffer.size);
+
+		switch (frame->get_type ())
+		{
+		case EdisonFrame::GET_STATUS:
+			update_status (std::static_pointer_cast<GetStatusEdisonFrame>(frame));
+			break;
+		default:
+			break;
+		}
+	}
+	catch (...)
+	{
+		err = true;
 	}
 
+	QString res_hex;
+	QByteArray ba (buffer.frame, buffer.frame_size);
+	for (int i = 0; i < ba.size(); i++)
+		res_hex.append ("0x").append (QString::number(ba.at(i), 16).rightJustified(2, '0')).append (' ');
+
 	ui->framesTreeWidget->insertTopLevelItem(0, new QTreeWidgetItem({
-		QString::fromStdString(std::to_string(frame->get_type ())),
-				QString::fromStdString(std::to_string(buffer.frame_size))}));
+		QString::fromStdString(err ? std::string("unknown frame") : std::to_string(frame->get_type ())),
+				QString::fromStdString(std::to_string(buffer.frame_size)), res_hex}));
 }
 
 void MainWindow::update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame> frame)
