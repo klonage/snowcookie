@@ -9,7 +9,7 @@
 using namespace SnowCookie;
 
 ClientService::ClientService(std::shared_ptr<LogManager> log_manager, int sock_fd)
-: sock_fd(sock_fd), divisor(0, 0, 0), log_manager(log_manager)
+: sock_fd(sock_fd), divisor({{0x10, 0}, {0x11, 0}, {0x12, 0}, {0x13, 1}}), log_manager(log_manager)
 {
 	parser.register_handler ([this] (DataBuffer buffer) {
 		on_buffer_parsed (buffer);
@@ -77,8 +77,8 @@ void ClientService::on_buffer_parsed (const DataBuffer& buffer)
 				divisor.set_division (f->get_location(), f->get_divisor());
 			break;
 		}
-		case 'S': // to stm
-			server->pass_to_device (buffer.frame, buffer.frame_size);
+		case EdisonFrame::STM_PASS: // to stm
+			server->pass_to_device (buffer.data, buffer.size);
 			break;
 		default:
 			break;// edison handler

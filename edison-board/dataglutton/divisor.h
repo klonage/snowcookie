@@ -8,39 +8,45 @@
 #ifndef EDISON_BOARD_DATAGLUTTON_DIVISOR_H_
 #define EDISON_BOARD_DATAGLUTTON_DIVISOR_H_
 
+#include <map>
+
 namespace SnowCookie {
 
 class Divisor
 {
-	int divisions [3] = {0};
-	int divs_count [3] = {0};
-public:
-	Divisor (int p1, int p2, int p3)
+	std::map<int, int> divisors;
+	std::map<int, int> divisors_count;
+
+	bool check_div_exists (int number)
 	{
-		divisions [0] = p1; divisions [1] = p2; divisions [2] = p3;
+		return divisors_count.find(number) != divisors_count.end();
+	}
+
+public:
+	Divisor (std::map<int, int> divisions)
+	{
+		divisors = divisions;
+		for (auto d : divisions)
+			divisors_count[d.first] = 0;
 	}
 	void set_division (int number, int value)
 	{
-		if (number > 2)
-			return;
-
-		divisions [number] = value;
+		divisors [number] = value;
+		if (!check_div_exists (number))
+			divisors_count [number] = 0;
 	}
 
 	void update (int number)
 	{
-		if (number > 2)
-			return;
-
-		divs_count [number] ++;
+		if (check_div_exists (number))
+			divisors_count [number] ++;
 	}
 
 	bool can_push (int number)
 	{
-		if (number > 2)
+		if (!check_div_exists (number))
 			return true;
-
-		return divisions [number] != 0 && divs_count [number] % divisions [number] == 0;
+		return divisors [number] != 0 && divisors_count [number] % divisors [number] == 0;
 	}
 };
 

@@ -16,7 +16,7 @@
 using namespace SnowCookie;
 
 LogManager::LogManager ()
-: divisor (1, 1, 1)
+: divisor ({})
 {}
 
 int LogManager::get_log_count () const { return log_files.size (); }

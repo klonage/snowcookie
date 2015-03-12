@@ -24,6 +24,7 @@ public:
 		STOP_LOG,
 		REBOOT,
 		DIVISOR,
+		STM_PASS = 0x77
 	};
 
 protected:
