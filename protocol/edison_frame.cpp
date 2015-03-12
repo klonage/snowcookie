@@ -29,6 +29,8 @@ std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (char * buffer, int size)
 		return std::make_shared <SimpleLogEdisonFrame> ((Type)buffer[0]);
 	case DIVISOR:
 		return std::make_shared <DivisorEdisonFrame> (buffer, size);
+	case STM_PASS:
+		return std::make_shared <StmPassEdisonFrame> ();
 	default:
 		throw std::runtime_error ("invalid frame type");
 	}

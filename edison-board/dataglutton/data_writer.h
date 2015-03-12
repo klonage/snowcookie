@@ -31,6 +31,9 @@ public:
 
 	std::string get_name() const override
 	{ return std::string("data reader"); }
+
+	std::shared_ptr<IPlugDevice> get_data_provider () const
+	{ return data_provider; }
 };
 
 }

@@ -9,7 +9,7 @@
 #include <cassert>
 
 #include <thread>
-#include "../dataglutton/iplug_device.h"
+#include "../dataglutton/data_writer.h"
 
 using namespace SnowCookie;
 
@@ -74,7 +74,7 @@ void Server::request_handler(int client_fd)
 
 	thread_count++;
 	std::thread t([client_fd, this] {
-		ClientService(log_manager, client_fd).service([this]{thread_finished();});
+		ClientService(log_manager, shared_from_this (), client_fd).service([this]{thread_finished();});
 	});
 	t.detach();
 }
@@ -96,13 +96,13 @@ void Server::thread_finished()
 
 void Server::pass_to_device (char *buffer, int size)
 {
-	auto device = manager->get_service<IPlugDevice> (ServiceType::UART_DEVICE);
-	if (device)
+	auto service = manager->get_service<DataWriter> (ServiceType::UART_DEVICE);
+	if (service && service->get_data_provider ())
 	{
 		int s = size;
 		while (s > 0)
 		{
-			auto x = device->write_data (buffer, size);
+			auto x = service->get_data_provider ()->write_data (buffer, size);
 			if (x < 0)
 				break;
 			s -= x;

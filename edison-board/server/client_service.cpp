@@ -8,8 +8,8 @@
 
 using namespace SnowCookie;
 
-ClientService::ClientService(std::shared_ptr<LogManager> log_manager, int sock_fd)
-: sock_fd(sock_fd), divisor({{0x10, 0}, {0x11, 0}, {0x12, 0}, {0x13, 1}}), log_manager(log_manager)
+ClientService::ClientService(std::shared_ptr<LogManager> log_manager, std::shared_ptr<Server> parent_server, int sock_fd)
+: sock_fd(sock_fd), divisor({{0x10, 0}, {0x11, 0}, {0x12, 0}, {0x13, 1}}), log_manager(log_manager), server (parent_server)
 {
 	parser.register_handler ([this] (DataBuffer buffer) {
 		on_buffer_parsed (buffer);

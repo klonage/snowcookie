@@ -9,6 +9,7 @@
 #define EDISON_FRAME_H_
 
 #include <memory>
+#include <cassert>
 
 namespace SnowCookie {
 
@@ -92,6 +93,14 @@ public:
 	int get_dest () const { return dest; }
 
 	static constexpr int max_size = 3 + sizeof(location) + sizeof(divisor);
+};
+
+class StmPassEdisonFrame : public EdisonFrame
+{
+public:
+	StmPassEdisonFrame () : EdisonFrame (STM_PASS) {}
+	virtual ~StmPassEdisonFrame () {}
+	int serialize (char* data) const override { assert(0); return 0; }
 };
 
 }

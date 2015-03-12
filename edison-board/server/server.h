@@ -8,10 +8,11 @@
 #include "dataglutton/log_manager.h"
 
 #include <atomic>
+#include <memory>
 
 namespace SnowCookie {
 
-class Server : public BgService
+class Server : public BgService, public std::enable_shared_from_this<Server>
 {
 	std::atomic_int thread_count;
 	int sock_fd = -1;
