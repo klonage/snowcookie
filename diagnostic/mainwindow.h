@@ -35,6 +35,7 @@ class MainWindow : public QMainWindow
 	void update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame> frame);
 
 	Q_SLOT void on_connect_clicked ();
+	Q_SLOT void on_sendRaw_clicked ();
 
 	static void show_message (const std::string& msg);
 

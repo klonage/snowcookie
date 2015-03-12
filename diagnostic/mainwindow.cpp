@@ -25,6 +25,8 @@ ui(new Ui::MainWindow)
 
 	QObject::connect (ui->connectButton, &QPushButton::clicked, this, &MainWindow::on_connect_clicked);
 
+	QObject::connect (ui->sendRawButton, &QPushButton::clicked, this, &MainWindow::on_sendRaw_clicked);
+
 	QObject::connect (ui->clearTreeButton, &QPushButton::clicked, [this] {
 		ui->framesTreeWidget->clear();
 	});
@@ -91,6 +93,38 @@ void MainWindow::on_connect_clicked()
 	{
 		show_message ("connection timeout");
 	}
+}
+
+void MainWindow::on_sendRaw_clicked ()
+{
+	auto str_bytes = ui->rawDataEdit->text ().split (' ');
+	char* bytes = new char[str_bytes.length ()];
+	char* dest_bytes = nullptr;
+	bool ok;
+	int base = ui->hexRawRadio->isChecked () ? 16 : 10;
+
+	try
+	{
+		for (int i = 0; i < str_bytes.length (); i++)
+		{
+			bytes[i] = str_bytes [i].toInt (&ok, base);
+			if (!ok)
+				throw std::runtime_error ("cannot parse numbers");
+		}
+
+		dest_bytes = new char[str_bytes.length ()*2];
+		int new_size = pack_frame (bytes, str_bytes.length (), dest_bytes);
+		socket->write (dest_bytes, new_size);
+	}
+	catch (const std::exception& ex)
+	{
+		show_message (std::string ("Exception: ") + ex.what ());
+	}
+	delete bytes;
+	delete dest_bytes;
+
+	if (ui->clearAfterSendCheckBox->isChecked ())
+		ui->rawDataEdit->setText ("");
 }
 
 void MainWindow::read_data ()
