@@ -80,7 +80,7 @@ void LogManager::write (DataBuffer buffer)
 	auto now = std::chrono::high_resolution_clock::now ();
 	long long timestamp = std::chrono::duration_cast<std::chrono::microseconds> (now.time_since_epoch ()).count ();
 	file.write ((char*)&timestamp, sizeof(timestamp));
-	file.write ((char*)buffer.data, buffer.size);
+	file.write ((char*)buffer.frame, buffer.frame_size);
 }
 
 void LogManager::remove_logs ()
