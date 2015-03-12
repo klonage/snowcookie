@@ -1,0 +1,20 @@
+# How to add your snowcookie server to edison startup
+# source: http://stephaniemoyerman.com/?p=41 slightly modified
+
+root@loganek-edison:~# cd /etc
+
+root@edison:/etc# mkdir init.d -p
+
+root@edison:/etc# cd init.d
+
+# new line below is needed!
+root@loganek-edison:/etc/init.d# echo '#!/bin/sh
+/path/to/snow-edison' > snow-edison.sh
+
+root@loganek-edison:/etc/init.d# chmod+x snow-edison.sh
+
+root@loganek-edison:/etc/init.d# update-rc.d snow-edison.sh defaults
+
+root@loganek-edison:/etc/init.d# reboot
+
+
