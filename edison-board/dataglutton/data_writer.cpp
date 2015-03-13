@@ -8,7 +8,7 @@
 #include <thread>
 
 using namespace SnowCookie;
-#define FAKE_DATA
+//#define FAKE_DATA
 DataWriter::DataWriter(std::shared_ptr<LogManager> log_manager, std::shared_ptr<ServiceManager> manager)
  : BgService (manager),
    log_manager (log_manager)
