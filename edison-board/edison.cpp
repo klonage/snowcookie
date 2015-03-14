@@ -1,5 +1,6 @@
 #include "server/server.h"
 #include "service_manager.h"
+#include "wifi_controller/wifi_service.h"
 #include "logger.h"
 #include "dataglutton/log_manager.h"
 
@@ -41,6 +42,7 @@ int main(int argc, char** argv)
 
 	manager->register_service(std::make_shared<Server>(port, log_manager, manager), ServiceType::TCP_SERVER);
 	manager->register_service(std::make_shared<DataWriter>(log_manager, manager), ServiceType::UART_DEVICE);
+	manager->register_service(std::make_shared<WifiService>(manager), ServiceType::WIFI_SERVICE);
 
 	signal(SIGINT, signal_handler);
 

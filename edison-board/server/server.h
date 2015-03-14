@@ -37,6 +37,8 @@ public:
 	{ return std::string("tcp server"); }
 
 	void pass_to_device (char *buffer, int size);
+
+	int get_connected_clients () const { return thread_count; }
 };
 
 }

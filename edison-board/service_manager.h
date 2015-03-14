@@ -12,6 +12,7 @@ enum class ServiceType
 {
 	TCP_SERVER,
 	UART_DEVICE,
+	WIFI_SERVICE
 };
 
 class ServiceManager
