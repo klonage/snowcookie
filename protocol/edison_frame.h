@@ -78,12 +78,12 @@ public:
 class DivisorEdisonFrame : public EdisonFrame
 {
 	char dest;
-	int location;
-	int divisor;
+	char location;
+	unsigned short divisor;
 public:
 	virtual ~DivisorEdisonFrame () {}
 	DivisorEdisonFrame (char* buffer, int size);
-	DivisorEdisonFrame (char dest, int location, int divisor)
+	DivisorEdisonFrame (char dest, char location, unsigned short divisor)
 	: EdisonFrame (DIVISOR), dest (dest), location (location), divisor (divisor) {}
 
 	int serialize (char* data) const override;

@@ -14,8 +14,8 @@ namespace SnowCookie {
 
 class Divisor
 {
-	std::map<int, int> divisors;
-	std::map<int, int> divisors_count;
+	std::map<char, unsigned short> divisors;
+	std::map<char, int> divisors_count;
 
 	bool check_div_exists (int number)
 	{
@@ -23,26 +23,26 @@ class Divisor
 	}
 
 public:
-	Divisor (std::map<int, int> divisions)
+	Divisor (std::map<char, unsigned short> divisions)
 	{
 		divisors = divisions;
 		for (auto d : divisions)
 			divisors_count[d.first] = 0;
 	}
-	void set_division (int number, int value)
+	void set_division (char number, unsigned short value)
 	{
 		divisors [number] = value;
 		if (!check_div_exists (number))
 			divisors_count [number] = 0;
 	}
 
-	void update (int number)
+	void update (char number)
 	{
 		if (check_div_exists (number))
 			divisors_count [number] ++;
 	}
 
-	bool can_push (int number)
+	bool can_push (char number)
 	{
 		if (!check_div_exists (number))
 			return true;

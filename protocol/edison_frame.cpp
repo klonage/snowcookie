@@ -95,16 +95,17 @@ DivisorEdisonFrame::DivisorEdisonFrame (char* buffer, int size)
  : EdisonFrame (DIVISOR)
 {
 	dest = buffer[1];
-	memcpy ((char*)& location, buffer + 2, sizeof (location));
-	memcpy ((char*)& divisor, buffer + 2 + sizeof(location), sizeof (divisor));
+	location = buffer [2];
+	divisor = (buffer [3] << 8) | (buffer[4] & 255);
 }
 
 int DivisorEdisonFrame::serialize (char* data) const
 {
 	int curr_ptr = EdisonFrame::serialize (data);
 	data[curr_ptr++] = dest;
-	memcpy (data + curr_ptr, (char*)&location, sizeof (location)); curr_ptr += sizeof (location);
-	memcpy (data + curr_ptr, (char*)&divisor, sizeof (divisor)); curr_ptr += sizeof (divisor);
+	data [curr_ptr++] = location;
+	data [curr_ptr++] = divisor >> 8 & 255;
+	data [curr_ptr++] = divisor & 255;
 
 	return curr_ptr;
 }
