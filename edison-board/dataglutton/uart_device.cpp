@@ -23,7 +23,7 @@ void UartDevice::init (const std::string& dev_name)
 		throw std::runtime_error ("cannot open uart device");
 
 	tcgetattr(uart_fd, &options);
-	options.c_cflag = B115200 | CS8 | CLOCAL | CREAD;
+	options.c_cflag = B460800 | CS8 | CLOCAL | CREAD;
 	options.c_iflag = IGNPAR;
 	options.c_oflag = 0;
 	options.c_lflag = 0;
