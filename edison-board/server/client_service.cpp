@@ -68,6 +68,9 @@ void ClientService::on_buffer_parsed (const DataBuffer& buffer)
 		case EdisonFrame::START_LOG:
 			log_manager->start_log (LogManager::get_dated_filename ());
 			break;
+		case EdisonFrame::WIFI:
+			server->stop_wifi_disabling ();
+			break;
 		case EdisonFrame::DIVISOR:
 		{
 			auto f = std::static_pointer_cast<DivisorEdisonFrame> (frame);

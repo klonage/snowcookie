@@ -2,6 +2,7 @@
 #include "client_service.h"
 #include "logger.h"
 #include "service_manager.h"
+#include "wifi_controller/wifi_service.h"
 #include <arpa/inet.h>
 #include <unistd.h>
 
@@ -108,4 +109,14 @@ void Server::pass_to_device (char *buffer, int size)
 			s -= x;
 		}
 	}
+}
+
+void Server::stop_wifi_disabling ()
+{
+	auto service = manager->get_service<WifiService> (ServiceType::WIFI_SERVICE);
+	if (service)
+	{
+		service->stop ();
+	}
+
 }

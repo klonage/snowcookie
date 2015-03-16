@@ -25,6 +25,7 @@ public:
 		STOP_LOG,
 		REBOOT,
 		DIVISOR,
+		WIFI,
 		STM_PASS = 0x77
 	};
 
@@ -58,7 +59,7 @@ public:
 
 	int serialize (char* data) const override;
 
-	static constexpr int max_size = 2 + sizeof (long long) + sizeof (int);
+	static constexpr int max_size = 3 + sizeof (long long) + sizeof (int);
 
 	long long get_size () const { return size; }
 	int get_log_count () const { return log_count; }
@@ -92,7 +93,7 @@ public:
 	int get_divisor () const { return divisor ; }
 	int get_dest () const { return dest; }
 
-	static constexpr int max_size = 3 + sizeof(location) + sizeof(divisor);
+	static constexpr int max_size = 4 + sizeof(location) + sizeof(divisor);
 };
 
 class StmPassEdisonFrame : public EdisonFrame
@@ -101,6 +102,15 @@ public:
 	StmPassEdisonFrame () : EdisonFrame (STM_PASS) {}
 	virtual ~StmPassEdisonFrame () {}
 	int serialize (char* data) const override { assert(0); return 0; }
+};
+
+class WifiEdisonFrame : public EdisonFrame
+{
+public:
+	static constexpr int max_size = 3;
+	WifiEdisonFrame () : EdisonFrame (WIFI) {}
+	virtual ~WifiEdisonFrame () {}
+	int serialize (char* data) const override;
 };
 
 }

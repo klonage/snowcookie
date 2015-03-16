@@ -29,6 +29,8 @@ std::shared_ptr<EdisonFrame> EdisonFrame::parse_frame (char * buffer, int size)
 		return std::make_shared <SimpleLogEdisonFrame> ((Type)buffer[0]);
 	case DIVISOR:
 		return std::make_shared <DivisorEdisonFrame> (buffer, size);
+	case WIFI:
+		return std::make_shared <WifiEdisonFrame> ();
 	case STM_PASS:
 		return std::make_shared <StmPassEdisonFrame> ();
 	default:
@@ -108,4 +110,9 @@ int DivisorEdisonFrame::serialize (char* data) const
 	data [curr_ptr++] = divisor & 255;
 
 	return curr_ptr;
+}
+
+int WifiEdisonFrame::serialize (char* data) const
+{
+	return EdisonFrame::serialize (data);
 }

@@ -16,14 +16,16 @@
 using namespace SnowCookie;
 
 MainWindow::MainWindow(QWidget *parent) :
-QMainWindow(parent),
-ui(new Ui::MainWindow)
+		QMainWindow(parent),
+		ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 
 	ui->framesTreeWidget->setHeaderLabels({"frame type", "frame size", "frame data"});
 
 	QObject::connect (ui->connectButton, &QPushButton::clicked, this, &MainWindow::on_connect_clicked);
+
+	QObject::connect (ui->stopDisablingWifiButton, &QPushButton::clicked, this, &MainWindow::on_stopDisablingWifi_clicked);
 
 	QObject::connect (ui->sendRawButton, &QPushButton::clicked, this, &MainWindow::on_sendRaw_clicked);
 
@@ -54,7 +56,7 @@ ui(new Ui::MainWindow)
 				(char)ui->destLineEdit->text().toInt(),
 				ui->locationLineEdit->text().toInt(),
 				ui->divisorLineEdit->text().toInt()
-				);
+		);
 		char dest [DivisorEdisonFrame::max_size * 2 + 1];
 		int size = EdisonFrame::pack_and_serialize(frame, dest);
 		QByteArray arr ((char*) dest, size);
@@ -177,4 +179,12 @@ void MainWindow::update_status (std::shared_ptr<SnowCookie::GetStatusEdisonFrame
 {
 	ui->diskUsageLabel->setText (QString::number (frame->get_size ()/1024/1024.0, 'f', 3));
 	ui->logFilesCountLabel->setText (QString::number (frame->get_log_count ()));
+}
+
+void MainWindow::on_stopDisablingWifi_clicked ()
+{
+	char dest [WifiEdisonFrame::max_size * 2 + 1];
+	int size = EdisonFrame::pack_and_serialize(WifiEdisonFrame (), dest);
+	QByteArray arr ((char*) dest, size);
+	socket->write (arr);
 }
