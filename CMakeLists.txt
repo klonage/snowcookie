@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8.12)
 project(snowcookie)
 
 option(DIAG "build diagnostic tool" OFF)
+option(WITH_WIFI_AUTODISABLING "enable wifi autodisable feature" ON)
+
+if(WITH_WIFI_AUTODISABLING)
+	add_definitions(-DWIFI_AUTODISABLING)
+endif()
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--no-as-needed")
