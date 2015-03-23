@@ -10,6 +10,8 @@
 #include <atomic>
 #include <memory>
 
+#include <ctime>
+
 namespace SnowCookie {
 
 class Server : public BgService, public std::enable_shared_from_this<Server>
@@ -17,6 +19,7 @@ class Server : public BgService, public std::enable_shared_from_this<Server>
 	std::atomic_int thread_count;
 	int sock_fd = -1;
 	int port;
+	time_t last_client;
 
 	static constexpr int max_buffer_size = 256;
 	static constexpr int max_connections = 5;
@@ -41,6 +44,8 @@ public:
 	int get_connected_clients () const { return thread_count; }
 
 	void stop_wifi_disabling ();
+
+	time_t get_last_client_time () const { return last_client; }
 };
 
 }

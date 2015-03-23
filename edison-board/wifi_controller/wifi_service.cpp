@@ -56,17 +56,20 @@ void WifiService::start ()
 	std::lock_guard<std::mutex> lock (start_stop);
 
 	run = true;
-
+	time_t period = 5l*60;
 	while (run)
 	{
 		std::unique_lock<std::mutex> lk(cv_m);
-		if(cv.wait_for(lk, std::chrono::minutes(5)) == std::cv_status::no_timeout)
+
+		if(cv.wait_for(lk, std::chrono::seconds(period)) == std::cv_status::no_timeout)
 		{
 			Logger::log ("Broke by user");
 			break;
 		}
 
-		if (manager->get_service<Server> (ServiceType::TCP_SERVER)->get_connected_clients () > 0)
+		auto time_diff = time (NULL) - manager->get_service<Server> (ServiceType::TCP_SERVER)->get_last_client_time ();
+		Logger::log ("Period", time_diff);
+		if (manager->get_service<Server> (ServiceType::TCP_SERVER)->get_connected_clients () > 0 || time_diff < period)
 			continue;
 		Logger::log ("clients not connected to server");
 

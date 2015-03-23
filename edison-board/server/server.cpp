@@ -17,6 +17,7 @@ using namespace SnowCookie;
 Server::Server(int port, std::shared_ptr<LogManager> log_manager, std::shared_ptr<ServiceManager> manager)
 : SnowCookie::BgService (manager), port(port), log_manager (log_manager)
 {
+	last_client = 0;
 }
 
 void Server::init()
@@ -91,6 +92,7 @@ void Server::thread_finished()
 {
 	assert(thread_count);
 	thread_count--;
+	last_client = time(NULL);
 
 	Logger::log ("thread finished, ", thread_count, " thread(s) left");
 }
