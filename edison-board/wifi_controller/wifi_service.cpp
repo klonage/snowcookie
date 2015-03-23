@@ -83,7 +83,6 @@ void WifiService::start ()
 			Logger::log ("Wifi already disabled");
 		// 	run_command ("configure_edison --disableOneTimeSetup");
 		}
-		break;
 	}
 	Logger::log ("Wifi service end start");
 }
